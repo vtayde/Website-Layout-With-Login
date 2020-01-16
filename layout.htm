@@ -1,0 +1,173 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+	body{
+		margin: 0px;
+		/* box-sizing:content-box; */
+		height: 100vh;
+	}
+header{
+	font-size: 18px;
+	font-weight: 600;
+	display: flex;
+	justify-content: center;
+	background-color: rgb(109, 182, 182);
+	height: 50px;
+	align-items: center;
+}
+section {
+	display: flex;
+}
+section.container {
+	flex:7;
+	height:100%;
+	/* background-color: rgb(219, 213, 213) */
+}
+nav {
+	flex: 1;
+	background-color: grey;
+}
+article {
+	flex: 7;
+	background-color: grey;
+	display: flex;
+	align-items: center;
+}
+ul {
+list-style-type: none;
+padding: 0;
+margin:0px;
+}
+li {
+	cursor: pointer;
+	padding: 0.5rem;
+	border-top: 1px solid grey;
+	align-items: center;
+	display:flex;
+	justify-content: center;
+}
+li:hover {
+	color: blue;
+}
+.card {
+	padding: 1rem;
+	margin:1rem;
+	box-shadow: 1px 2px 4px 1px grey;
+	width: 100%;
+	height: auto;
+	display: block;
+}
+.form-ele{
+	display:flex;
+	justify-content: center;
+	padding: 0.5rem;
+	margin: 0.5rem;
+	font-weight: 600;
+}
+.form-label {
+	padding: 0 1rem;
+	font-weight: 600;
+}
+.form-input {
+	padding: 0.5rem;
+}
+.btn-submit {
+	padding: 0.5rem;
+	color: white;
+	background-color: green;
+	border: 1px solid green;
+}
+</style>
+
+</head>
+
+<body>
+<header>Layout</header>
+<section>
+	<nav>
+		<ul>
+			<li onclick="setFlag('form1')">one</li>
+			<li onclick="setFlag('form2')">two</li>
+			<li >three</li>
+		</ul>
+	</nav>
+	<section class="container">
+		<div class="card" id="form1">
+			<div class="form-ele">Form1</div>
+			<div class="form-ele">
+				<label class="form-label">Email: </label>
+				<input class="form-input" type="email" placeholder="email"/>
+			</div>
+			<div class="form-ele">
+					<label class="form-label">Password: </label>
+					<input class="form-input" type="password" placeholder="email"/>
+				</div>
+				<div class="form-ele">
+					<button class="btn-submit" onclick="login()">Login</button>
+				</div>
+		</div>
+		<div class="card" id="form2">
+				<div >Form2</div>
+				emailID:
+				<input type="email" placeholder="email"/>
+				<br/>
+				password:
+				<input type="password" placeholder="password"/>
+				
+			</div>
+	</section>
+</section>
+</div>
+<script>
+	let flag1 = "form1";
+	let loginResp = {}
+	window.onload = function () {
+		if(flag1 == "form1") {
+			document.getElementById("form2").style.display = "none";
+		}
+	}
+	function setFlag(val) {
+		debugger
+		this.flag1 = val;
+		if(val == "form1"){
+			document.getElementById("form1").style.display = "block";
+			document.getElementById("form2").style.display = "none";
+		}else {
+			document.getElementById("form2").style.display = "block";
+			document.getElementById("form1").style.display = "none";
+		}
+	}
+	function login () {
+		const params = {
+          emailID: "impact@impactanalytics.co",
+          password: "impactpasswordnew"
+        };
+		const http = new XMLHttpRequest()
+		http.open("POST", "https://joann-allocation-staging.impactanalytics.co/login")
+		http.setRequestHeader("content-type","application/json")
+		http.send(JSON.stringify(params))
+		http.onload = function () {
+			debugger
+			this.loginResp = JSON.parse(JSON.parse(JSON.stringify(this.responseText)))
+			if(this.loginResp.status) {
+				let tempObj = {token:this.loginResp.token}
+				http.open("GET", "https://joann-allocation-staging.impactanalytics.co/getAllocationsOfCurrentUser")
+				http.setRequestHeader("content-type","application/json")
+				http.setRequestHeader("authorization",`Bearer ${this.loginResp.token}`)
+				http.setRequestHeader("token",this.loginResp.token)
+				http.send()
+				http.onload = function(){
+					debugger
+				}
+					
+			}
+
+		}
+	}
+</script>
+</body>
+
+</html>
